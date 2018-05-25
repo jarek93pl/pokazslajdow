@@ -64,6 +64,7 @@
             this.otwórzWieleToolStripMenuItem.Name = "otwórzWieleToolStripMenuItem";
             this.otwórzWieleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.otwórzWieleToolStripMenuItem.Text = "Otwórz wiele";
+            this.otwórzWieleToolStripMenuItem.Click += new System.EventHandler(this.otwórzWieleToolStripMenuItem_Click);
             // 
             // otwórzJedenToolStripMenuItem
             // 
@@ -78,6 +79,7 @@
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(282, 407);
             this.listBox1.TabIndex = 1;
+            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
             // pictureBox1
             // 
