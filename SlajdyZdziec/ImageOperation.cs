@@ -1,0 +1,119 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+using System.Numerics;
+namespace SlajdyZdziec
+{
+    public unsafe static class ImageOperation
+    {
+        public static byte* LoadMono(Bitmap Obraz, out int Size)
+        {
+            IntPtr mr = Marshal.AllocHGlobal(Size = (Obraz.Width * Obraz.Height));
+            byte* obsugiwana = (byte*)mr;
+
+            int j = 0;
+            BitmapData bp = Obraz.LockBits(new Rectangle(0, 0, Obraz.Width, Obraz.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+            for (int y = 0; y < Obraz.Height; y++)
+            {
+
+                rgb* kr = (rgb*)((byte*)(bp.Scan0 + y * bp.Stride));
+                for (int x = 0; x < Obraz.Width; x++, kr++, obsugiwana++)
+                {
+                    j = (*kr).r;
+                    j += (*kr).g;
+                    j += (*kr).b;
+                    byte zw = ((byte)(j / 3));
+                    *obsugiwana = zw;
+                }
+            }
+            Obraz.UnlockBits(bp);
+            return (byte*)mr;
+        }
+        public static byte* LoadRGB(Bitmap Obraz, out int Size)
+        {
+            IntPtr mr = Marshal.AllocHGlobal(Size = (Obraz.Width * Obraz.Height * 3));
+            byte* obsugiwana = (byte*)mr;
+
+            int j = 0;
+            BitmapData bp = Obraz.LockBits(new Rectangle(0, 0, Obraz.Width, Obraz.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+            for (int y = 0; y < Obraz.Height; y++)
+            {
+
+                rgb* kr = (rgb*)((byte*)(bp.Scan0 + y * bp.Stride));
+                for (int x = 0; x < Obraz.Width; x++, kr++)
+                {
+                    *(obsugiwana++) = (*kr).r;
+                    *(obsugiwana++) = (*kr).g;
+                    *(obsugiwana++) = (*kr).b;
+                }
+            }
+            Obraz.UnlockBits(bp);
+            return (byte*)mr;
+        }
+
+
+        public static byte[] LoadMono(Bitmap Obraz)
+        {
+            byte[] table = new byte[(Obraz.Width * Obraz.Height)];
+            int obsugiwana = 0;
+
+            int j = 0;
+            BitmapData bp = Obraz.LockBits(new Rectangle(0, 0, Obraz.Width, Obraz.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+            for (int y = 0; y < Obraz.Height; y++)
+            {
+
+                rgb* kr = (rgb*)((byte*)(bp.Scan0 + y * bp.Stride));
+                for (int x = 0; x < Obraz.Width; x++, kr++, obsugiwana++)
+                {
+                    j = (*kr).r;
+                    j += (*kr).g;
+                    j += (*kr).b;
+                    byte zw = ((byte)(j / 3));
+                    table[obsugiwana] = zw;
+                }
+            }
+            Obraz.UnlockBits(bp);
+            return table;
+        }
+        public static byte[] LoadRGB(Bitmap Obraz)
+        {
+            byte[] table = new byte[(Obraz.Width * Obraz.Height) * 3];
+            int obsugiwana = 0;
+
+            int j = 0;
+            BitmapData bp = Obraz.LockBits(new Rectangle(0, 0, Obraz.Width, Obraz.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
+            for (int y = 0; y < Obraz.Height; y++)
+            {
+
+                rgb* kr = (rgb*)((byte*)(bp.Scan0 + y * bp.Stride));
+                for (int x = 0; x < Obraz.Width; x++, kr++)
+                {
+                    table[obsugiwana++] = (*kr).r;
+                    table[obsugiwana++] = (*kr).g;
+                    table[obsugiwana++] = (*kr).b;
+                }
+            }
+            Obraz.UnlockBits(bp);
+            return table;
+        }
+        public static IEnumerable<Vector<short>> GetVector(byte[] imageInByte, int size)
+        {
+            short[] vs = imageInByte.Cast<short>().ToArray();
+            int Numer = imageInByte.Length / Vector<short>.Count;
+            Numer += imageInByte.Length % Vector<short>.Count == 0 ? 0 : 1;
+            for (int i = 0; i < Numer; i++)
+            {
+                yield return new Vector<short>(vs, i * Vector<short>.Count);
+            }
+        }
+    }
+}
