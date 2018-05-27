@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
-namespace SlajdyZdziec
+namespace SlajdyZdziec.BaseLogic
 {
     public unsafe static class ImageOperation
     {
@@ -105,14 +105,21 @@ namespace SlajdyZdziec
             Obraz.UnlockBits(bp);
             return table;
         }
-        public static IEnumerable<Vector<short>> GetVector(byte[] imageInByte, int size)
+        public static IEnumerable<Vector<short>> GetVector(byte[] imageInByte)
         {
-            short[] vs = imageInByte.Cast<short>().ToArray();
+            List<short> vs = new List<short>();
+            vs.AddRange(imageInByte.Select(X => (short)X));
             int Numer = imageInByte.Length / Vector<short>.Count;
             Numer += imageInByte.Length % Vector<short>.Count == 0 ? 0 : 1;
+            int Size = Numer * Vector<short>.Count;
+            for (int j = imageInByte.Length; j < Size; j++)
+            {
+                vs.Add(0);
+            }
+            short[] arrey = vs.ToArray();
             for (int i = 0; i < Numer; i++)
             {
-                yield return new Vector<short>(vs, i * Vector<short>.Count);
+                yield return new Vector<short>(arrey, i * Vector<short>.Count);
             }
         }
     }

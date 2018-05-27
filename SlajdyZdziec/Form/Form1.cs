@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using SlajdyZdziec.BaseLogic;
 namespace SlajdyZdziec
 {
     public partial class Form1 : Form
@@ -22,7 +22,7 @@ namespace SlajdyZdziec
         {
             get
             {
-                return (IEnumerable<ImageUrl>)listBox1.Items;
+                return listBox1.Items.OfType<ImageUrl>();
             }
         }
         private void otwórzWieleToolStripMenuItem_Click(object sender, EventArgs e)
@@ -40,5 +40,33 @@ namespace SlajdyZdziec
                 pictureBox1.Image = url.Bitmap;
             }
         }
+
+        private void testToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            List<LogicAndImage<ImageToCompare, ImageUrl>> list = new List<LogicAndImage<ImageToCompare, ImageUrl>>();
+            list.AddRange(imageUrls.Select(X => new LogicAndImage<ImageToCompare, ImageUrl>()
+            { Bitmap = X, Logic = new ImageToCompare(X.Bitmap, new Size(15, 15)) }));
+            (LogicAndImage<ImageToCompare, ImageUrl> Left, LogicAndImage<ImageToCompare, ImageUrl> Right) Record = (null, null);
+            long MinDifrent = long.MaxValue;
+            for (int i = 0; i < list.Count; i++)
+            {
+                for (int j = 0; j < list.Count; j++)
+                {
+                    if (i != j)
+                    {
+                        var curent = (list[i], list[j]);
+                        long CurentDifrent = ImageToCompare.GetDifrent(curent);
+                        if (CurentDifrent < MinDifrent)
+                        {
+                            MinDifrent = CurentDifrent;
+                            Record = curent;
+                        }
+                    }
+                }
+            }
+
+            MessageBox.Show($"{Record.Left.Bitmap.file.FullName}\n {Record.Right.Bitmap.file.FullName}");
+        }
+            
     }
 }

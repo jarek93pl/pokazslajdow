@@ -56,11 +56,12 @@
     <Compile Include="Form\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="ImageOperation.cs" />
-    <Compile Include="ImageToCompare.cs" />
+    <Compile Include="BaseLogic\ImageOperation.cs" />
+    <Compile Include="BaseLogic\ImageToCompare.cs" />
+    <Compile Include="BaseLogic\LogicAndImage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="rgb.cs" />
+    <Compile Include="BaseLogic\rgb.cs" />
     <Compile Include="UserLogic\FileHelper.cs" />
     <Compile Include="UserLogic\ImageUrl.cs" />
     <Compile Include="UserLogic\SetingProvaider.cs" />
