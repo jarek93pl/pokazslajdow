@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SlajdyZdziec.BaseLogic;
+using System.Diagnostics;
+
 namespace SlajdyZdziec
 {
     public partial class Form1 : Form
@@ -45,9 +47,10 @@ namespace SlajdyZdziec
         {
             List<LogicAndImage<ImageToCompare, ImageUrl>> list = new List<LogicAndImage<ImageToCompare, ImageUrl>>();
             list.AddRange(imageUrls.Select(X => new LogicAndImage<ImageToCompare, ImageUrl>()
-            { Bitmap = X, Logic = new ImageToCompare(X.Bitmap, new Size(15, 15)) }));
+            { Bitmap = X, Logic = new ImageToCompare(X.Bitmap, new Size(30, 30),true) }));
             (LogicAndImage<ImageToCompare, ImageUrl> Left, LogicAndImage<ImageToCompare, ImageUrl> Right) Record = (null, null);
             long MinDifrent = long.MaxValue;
+            Stopwatch stoper = Stopwatch.StartNew();
             for (int i = 0; i < list.Count; i++)
             {
                 for (int j = 0; j < list.Count; j++)
@@ -65,8 +68,8 @@ namespace SlajdyZdziec
                 }
             }
 
-            MessageBox.Show($"{Record.Left.Bitmap.file.FullName}\n {Record.Right.Bitmap.file.FullName}");
+            MessageBox.Show($"{stoper.ElapsedMilliseconds} {Record.Left.Bitmap.file.FullName}\n {Record.Right.Bitmap.file.FullName}");
         }
-            
+
     }
 }
