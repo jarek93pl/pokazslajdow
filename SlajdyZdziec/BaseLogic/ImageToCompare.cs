@@ -37,6 +37,8 @@ namespace SlajdyZdziec.BaseLogic
 
         public ImageToCompare(Bitmap bitmap, Size size, bool UseAvx = true) : this(bitmap, size, TypeConvert.Bright, UseAvx)
         {
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
         }
         private void LoadVector(Bitmap bitmap, Size size)
         {
@@ -83,7 +85,7 @@ namespace SlajdyZdziec.BaseLogic
             byte[] toComper = image.arrey;
             for (int i = 0; i < arrey.Length; i++)
             {
-                Difrent += Math.Abs(arrey[i]- toComper[i]);
+                Difrent += Math.Abs(arrey[i] - toComper[i]);
             }
             return Difrent;
         }

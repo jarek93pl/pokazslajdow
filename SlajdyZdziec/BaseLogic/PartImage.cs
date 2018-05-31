@@ -21,11 +21,15 @@ namespace SlajdyZdziec.BaseLogic
         Bitmap Source;
         public static explicit operator Bitmap(PartImage part)
         {
-            return part.Source.Clone(part.Rectangle, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            lock (part.Source)
+            {
+                return part.Source.Clone(part.Rectangle, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+
+            }
         }
         public static PartImage[] GetPartImageDim(Bitmap source, Size parts, out Size partSize)
         {
-            partSize = new Size(source.Width / parts.Width, source.Height / parts.Height);
+            partSize = GetPartSize(source, in parts);
             PartImage[] returned = new PartImage[parts.Width * parts.Height];
             int l = 0;
             for (int i = 0; i < parts.Height; i++)
@@ -36,6 +40,11 @@ namespace SlajdyZdziec.BaseLogic
                 }
             }
             return returned;
+        }
+
+        public static Size GetPartSize(Bitmap source, in Size parts)
+        {
+            return new Size(source.Width / parts.Width, source.Height / parts.Height);
         }
     }
 }

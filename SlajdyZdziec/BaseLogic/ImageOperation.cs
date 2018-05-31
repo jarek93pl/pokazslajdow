@@ -39,8 +39,7 @@ namespace SlajdyZdziec.BaseLogic
         {
             IntPtr mr = Marshal.AllocHGlobal(Size = (Obraz.Width * Obraz.Height * 3));
             byte* obsugiwana = (byte*)mr;
-
-            int j = 0;
+            
             BitmapData bp = Obraz.LockBits(new Rectangle(0, 0, Obraz.Width, Obraz.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
 
             for (int y = 0; y < Obraz.Height; y++)

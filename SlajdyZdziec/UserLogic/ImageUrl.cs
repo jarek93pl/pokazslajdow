@@ -15,13 +15,14 @@ namespace SlajdyZdziec.UserLogic
         {
             this.file = file;
         }
-        public Bitmap Bitmap
+        public Bitmap Bitmap(Size s)
         {
-            get
-            {
-                return new Bitmap( new Bitmap(file.FullName),300,300);
-            }
-        }
+            return new Bitmap(new Bitmap(file.FullName), s);
 
+        }
+        public override string ToString()
+        {
+            return file.Name;
+        }
     }
 }

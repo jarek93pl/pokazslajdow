@@ -32,11 +32,12 @@
             this.plikToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.otwórzWieleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.otwórzJedenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.calsageWitchPhotosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -56,7 +57,8 @@
             this.plikToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.otwórzWieleToolStripMenuItem,
             this.otwórzJedenToolStripMenuItem,
-            this.testToolStripMenuItem});
+            this.testToolStripMenuItem,
+            this.calsageWitchPhotosToolStripMenuItem});
             this.plikToolStripMenuItem.Name = "plikToolStripMenuItem";
             this.plikToolStripMenuItem.Size = new System.Drawing.Size(38, 20);
             this.plikToolStripMenuItem.Text = "Plik";
@@ -64,15 +66,22 @@
             // otwórzWieleToolStripMenuItem
             // 
             this.otwórzWieleToolStripMenuItem.Name = "otwórzWieleToolStripMenuItem";
-            this.otwórzWieleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.otwórzWieleToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.otwórzWieleToolStripMenuItem.Text = "Otwórz wiele";
             this.otwórzWieleToolStripMenuItem.Click += new System.EventHandler(this.otwórzWieleToolStripMenuItem_Click);
             // 
             // otwórzJedenToolStripMenuItem
             // 
             this.otwórzJedenToolStripMenuItem.Name = "otwórzJedenToolStripMenuItem";
-            this.otwórzJedenToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.otwórzJedenToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.otwórzJedenToolStripMenuItem.Text = "Otwórz jeden";
+            // 
+            // testToolStripMenuItem
+            // 
+            this.testToolStripMenuItem.Name = "testToolStripMenuItem";
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.testToolStripMenuItem.Text = "Test";
+            this.testToolStripMenuItem.Click += new System.EventHandler(this.testToolStripMenuItem_Click);
             // 
             // listBox1
             // 
@@ -95,12 +104,12 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-            // testToolStripMenuItem
+            // calsageWitchPhotosToolStripMenuItem
             // 
-            this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.testToolStripMenuItem.Text = "Test";
-            this.testToolStripMenuItem.Click += new System.EventHandler(this.testToolStripMenuItem_Click);
+            this.calsageWitchPhotosToolStripMenuItem.Name = "calsageWitchPhotosToolStripMenuItem";
+            this.calsageWitchPhotosToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.calsageWitchPhotosToolStripMenuItem.Text = "Kolarz udający wieksszy obraz";
+            this.calsageWitchPhotosToolStripMenuItem.Click += new System.EventHandler(this.calsageWitchPhotosToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -132,6 +141,7 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem calsageWitchPhotosToolStripMenuItem;
     }
 }
 
