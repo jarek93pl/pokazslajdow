@@ -34,6 +34,7 @@
             this.SizePartImage = new SlajdyZdziec.GUI.Comon.PoleVektor();
             this.button2 = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.SizeToCompare = new SlajdyZdziec.GUI.Comon.PoleVektor();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -63,8 +64,9 @@
             this.projection.Name = "projection";
             this.projection.Size = new System.Drawing.Size(212, 69);
             this.projection.TabIndex = 2;
-            this.projection.Text = "Dokładność odwzrowoania";
+            this.projection.Text = "z ilu obrazów ma się składać";
             this.projection.Wartość = new System.Drawing.Point(20, 20);
+            this.projection.WartośćSize = new System.Drawing.Size(20, 20);
             this.projection.Load += new System.EventHandler(this.poleVektor1_Load);
             // 
             // SizePartImage
@@ -77,10 +79,11 @@
             this.SizePartImage.TabIndex = 3;
             this.SizePartImage.Text = "Wielkość pod obrazu";
             this.SizePartImage.Wartość = new System.Drawing.Point(20, 20);
+            this.SizePartImage.WartośćSize = new System.Drawing.Size(20, 20);
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(12, 394);
+            this.button2.Location = new System.Drawing.Point(12, 494);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(226, 23);
             this.button2.TabIndex = 4;
@@ -92,11 +95,25 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // SizeToCompare
+            // 
+            this.SizeToCompare.AutoSize = true;
+            this.SizeToCompare.Lab = 0;
+            this.SizeToCompare.Location = new System.Drawing.Point(12, 392);
+            this.SizeToCompare.Name = "SizeToCompare";
+            this.SizeToCompare.Size = new System.Drawing.Size(213, 69);
+            this.SizeToCompare.TabIndex = 5;
+            this.SizeToCompare.Text = "Wielkość przy której są porównywane";
+            this.SizeToCompare.Wartość = new System.Drawing.Point(20, 20);
+            this.SizeToCompare.WartośćSize = new System.Drawing.Size(20, 20);
+            this.SizeToCompare.Load += new System.EventHandler(this.poleVektor1_Load_1);
+            // 
             // ColageImageForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(250, 469);
+            this.ClientSize = new System.Drawing.Size(263, 543);
+            this.Controls.Add(this.SizeToCompare);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.SizePartImage);
             this.Controls.Add(this.projection);
@@ -118,5 +135,6 @@
         private Comon.PoleVektor SizePartImage;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private Comon.PoleVektor SizeToCompare;
     }
 }

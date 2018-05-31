@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SlajdyZdziec.BaseLogic.ThreadHelper;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -16,19 +17,31 @@ namespace SlajdyZdziec.BaseLogic
             Rectangle = new Rectangle(new Point(sizeRectangle.Width * point.X, sizeRectangle.Height * point.Y), sizeRectangle);
 
         }
+        Guid OperationGuid;
+        public PartImage(Bitmap bitmap, Point point, Size sizeRectangle, Guid OperationGuid) : this(bitmap, point, sizeRectangle)
+        {
+            this.OperationGuid = OperationGuid;
+        }
         public Rectangle Rectangle;
         public Point PointInImage;
         Bitmap Source;
         public static explicit operator Bitmap(PartImage part)
         {
-            lock (part.Source)
+            if (part.OperationGuid != default)
             {
-                return part.Source.Clone(part.Rectangle, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-
+                return CopyToLocal.GetLocalCopy(part.Source, part.OperationGuid).Clone(part.Rectangle, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            }
+            else
+            {
+                lock (part.Source)
+                {
+                    return part.Source.Clone(part.Rectangle, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                }
             }
         }
         public static PartImage[] GetPartImageDim(Bitmap source, Size parts, out Size partSize)
         {
+            Guid guid = Guid.NewGuid();
             partSize = GetPartSize(source, in parts);
             PartImage[] returned = new PartImage[parts.Width * parts.Height];
             int l = 0;
@@ -36,7 +49,7 @@ namespace SlajdyZdziec.BaseLogic
             {
                 for (int j = 0; j < parts.Width; j++)
                 {
-                    returned[l++] = new PartImage(source, new Point(j, i), partSize);
+                    returned[l++] = new PartImage(source, new Point(j, i), partSize, guid);
                 }
             }
             return returned;

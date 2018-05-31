@@ -43,8 +43,13 @@ namespace SlajdyZdziec.GUI.ImageInImage
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Dispatcher.GetMultiImage(bitmap, projection.WartośćSize, SizePartImage.WartośćSize, urls, new BasicOrder<SlajdyZdziec.BaseLogic.PartImage>()).Save("t.jpg");
+            Dispatcher.GetMultiImage(bitmap, projection.WartośćSize, SizePartImage.WartośćSize,SizeToCompare.WartośćSize, urls, new BasicOrder<SlajdyZdziec.BaseLogic.PartImage>()).Save("t.jpg");
             Process.Start("t.jpg");
+        }
+
+        private void poleVektor1_Load_1(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -35,7 +35,7 @@ namespace SlajdyZdziec.BaseLogic
             }
         }
 
-        public ImageToCompare(Bitmap bitmap, Size size, bool UseAvx = true) : this(bitmap, size, TypeConvert.Bright, UseAvx)
+        public ImageToCompare(Bitmap bitmap, Size size, bool UseAvx = true) : this(bitmap, size, TypeConvert.RGB, UseAvx)
         {
             GC.WaitForPendingFinalizers();
             GC.Collect();
