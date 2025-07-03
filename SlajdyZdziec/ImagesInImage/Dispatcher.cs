@@ -27,7 +27,7 @@ namespace SlajdyZdziec.ImagesInImage
                     Bitmap = X,
                     Logic = new ImageToCompare((Bitmap)X, SizeToCompare)
                 }
-                ).ToList().AsParallel().// Dołączenie do fragmentów danych o wektorach
+                ).AsParallel().ToList().// Dołączenie do fragmentów danych o wektorach
                 Select(X => (X, PartImageFunc(X))).ToList());//obliczenie najbarddziej podobnych obrazów
 
 
@@ -37,7 +37,7 @@ namespace SlajdyZdziec.ImagesInImage
         }
         private static Bitmap MargeImage(Size partsDim, Size SizePartImageInOut, Size partSizeInImage, PartImage[] partImage, Dictionary<PartImage, Func<Bitmap>> BitmapDictionary)
         {
-            Bitmap zw = new Bitmap(partSizeInImage.Width * partsDim.Width, partSizeInImage.Height * partsDim.Height);
+            Bitmap zw = new Bitmap(SizePartImageInOut.Width * partsDim.Width, SizePartImageInOut.Height * partsDim.Height);
             using (Graphics graphic = Graphics.FromImage(zw))
             {
                 foreach (var item in partImage)

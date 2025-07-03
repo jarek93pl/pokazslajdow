@@ -12,7 +12,7 @@ namespace SlajdyZdziec.UserLogic
         {
             get
             {
-                return "*.jpg";
+                return "*";
             }
         }
     }
