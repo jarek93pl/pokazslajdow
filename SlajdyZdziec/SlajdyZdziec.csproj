@@ -75,8 +75,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseLogic\Order\BasicOrder.cs" />
-    <Compile Include="BaseLogic\Order\IOrderDispatcher..cs" />
     <Compile Include="BaseLogic\PartImage.cs" />
     <Compile Include="BaseLogic\ThreadHelper\CopyToLocal.cs" />
     <Compile Include="GUI\Comon\PoleVektor.cs">
@@ -142,6 +140,10 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="config.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

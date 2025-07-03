@@ -1,5 +1,4 @@
-﻿using SlajdyZdziec.BaseLogic.Order;
-using SlajdyZdziec.ImagesInImage;
+﻿using SlajdyZdziec.ImagesInImage;
 using SlajdyZdziec.UserLogic;
 using System;
 using System.Collections.Generic;
@@ -43,7 +42,7 @@ namespace SlajdyZdziec.GUI.ImageInImage
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Dispatcher.GetMultiImage(bitmap, projection.WartośćSize, SizePartImage.WartośćSize,SizeToCompare.WartośćSize, urls, new BasicOrder<SlajdyZdziec.BaseLogic.PartImage>()).Save("t.jpg");
+            Dispatcher.GetMultiImage(bitmap, projection.WartośćSize, SizePartImage.WartośćSize,SizeToCompare.WartośćSize, urls).Save("t.jpg");
             Process.Start("t.jpg");
         }
 

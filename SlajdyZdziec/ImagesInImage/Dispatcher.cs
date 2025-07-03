@@ -1,5 +1,4 @@
 ﻿using SlajdyZdziec.BaseLogic;
-using SlajdyZdziec.BaseLogic.Order;
 using SlajdyZdziec.BaseLogic.ThreadHelper;
 using SlajdyZdziec.UserLogic;
 using System;
@@ -14,21 +13,21 @@ namespace SlajdyZdziec.ImagesInImage
     public static class Dispatcher
     {
 
-        public static Bitmap GetMultiImage(Bitmap image, Size partsDim, Size SizePartImageInOut, Size SizeToCompare, Func<LogicAndImage<ImageToCompare, PartImage>, Func<Bitmap>> PartImageFunc, IOrderDispatcher<PartImage> parts)
+        private static Bitmap GetMultiImage(Bitmap image, Size partsDim, Size SizePartImageInOut, Size SizeToCompare, Func<LogicAndImage<ImageToCompare, PartImage>, Func<Bitmap>> PartImageFunc)
         {
             Size partSizeInImage;
             PartImage[] partImage = PartImage.GetPartImageDim(image, partsDim, out partSizeInImage);
             Dictionary<PartImage, Func<Bitmap>> BitmapDictionary = new Dictionary<PartImage, Func<Bitmap>>();
 
             List<(LogicAndImage<ImageToCompare, PartImage> part, Func<Bitmap> bitmapFunc)> x =
-                (parts.GetItemWitchOrder(partsDim, partImage).AsParallel().Select(X =>//[pobieranie fragmentów
+                partImage.AsParallel().Select(X =>//[pobieranie fragmentów
                 new LogicAndImage<ImageToCompare, PartImage>()
                 {
                     Bitmap = X,
                     Logic = new ImageToCompare((Bitmap)X, SizeToCompare)
                 }
                 ).AsParallel().ToList().// Dołączenie do fragmentów danych o wektorach
-                Select(X => (X, PartImageFunc(X))).ToList());//obliczenie najbarddziej podobnych obrazów
+                Select(X => (X, PartImageFunc(X))).ToList();//obliczenie najbarddziej podobnych obrazów
 
 
             x.ForEach(X => BitmapDictionary.Add(X.part.Bitmap, X.bitmapFunc));
@@ -49,7 +48,7 @@ namespace SlajdyZdziec.ImagesInImage
             return zw;
         }
 
-        public static Bitmap GetMultiImage(Bitmap image, Size partsDim, Size SizePartImageInOut, Size SizeToCompare, List<ImageUrl> imageUrls, IOrderDispatcher<PartImage> parts)
+        public static Bitmap GetMultiImage(Bitmap image, Size partsDim, Size SizePartImageInOut, Size SizeToCompare, List<ImageUrl> imageUrls)
         {
             List<LogicAndImage<ImageToCompare, ImageUrl>> list = new List<LogicAndImage<ImageToCompare, ImageUrl>>();
 
@@ -72,7 +71,7 @@ namespace SlajdyZdziec.ImagesInImage
 
             list.AddRange(imageUrls.AsParallel().Select(X => new LogicAndImage<ImageToCompare, ImageUrl>()
             { Bitmap = X, Logic = new ImageToCompare(X.Bitmap(SizeToCompare), SizeToCompare, true) }));
-            return GetMultiImage(image, partsDim, SizePartImageInOut, SizeToCompare, Geter, new BasicOrder<PartImage>());
+            return GetMultiImage(image, partsDim, SizePartImageInOut, SizeToCompare, Geter);
         }
 
 
