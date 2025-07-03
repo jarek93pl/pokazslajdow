@@ -10,6 +10,7 @@ namespace SlajdyZdziec.BaseLogic
 {
     public class PartImage
     {
+        public int Pos;
         public PartImage(Bitmap bitmap, Point point, Size sizeRectangle)
         {
             Source = bitmap;
@@ -49,7 +50,7 @@ namespace SlajdyZdziec.BaseLogic
             {
                 for (int j = 0; j < parts.Width; j++)
                 {
-                    returned[l++] = new PartImage(source, new Point(j, i), partSize, guid);
+                    returned[l++] = new PartImage(source, new Point(j, i), partSize, guid) { Pos = l -1};
                 }
             }
             return returned;

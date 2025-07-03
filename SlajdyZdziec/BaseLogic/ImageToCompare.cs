@@ -16,6 +16,10 @@ namespace SlajdyZdziec.BaseLogic
         public enum TypeConvert { Bright, RGB };
         bool UseAvx;
         TypeConvert typeConvert;
+        public ImageToCompare()
+        {
+
+        }
         public ImageToCompare(Bitmap bitmap, Size size, TypeConvert typeConvert, bool UseAvx = true)
         {
             this.UseAvx = UseAvx;
@@ -25,20 +29,20 @@ namespace SlajdyZdziec.BaseLogic
 
         private void Load(Bitmap bitmap, Size size, bool UseAvx)
         {
+            Bitmap toDispose;
             if (UseAvx)
             {
-                LoadVector(new Bitmap(bitmap, size), size);
+                LoadVector(toDispose = new Bitmap(bitmap, size), size);
             }
             else
             {
-                Load(new Bitmap(bitmap, size), size);
+                Load(toDispose = new Bitmap(bitmap, size), size);
             }
+            toDispose.Dispose();
         }
 
         public ImageToCompare(Bitmap bitmap, Size size, bool UseAvx = true) : this(bitmap, size, TypeConvert.RGB, UseAvx)
         {
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
         }
         private void LoadVector(Bitmap bitmap, Size size)
         {

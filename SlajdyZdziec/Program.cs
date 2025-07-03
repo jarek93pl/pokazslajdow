@@ -49,7 +49,7 @@ namespace SlajdyZdziec
                         imageUrls.Add(new ImageUrl(new FileInfo(textsConf[i])));
                     }
                     Bitmap outPut= Dispatcher.GetMultiImage(input, numbers, sizes, compreSizes, imageUrls);
-                    outPut.Save("outMosaic.png");
+                    outPut.Save($"outMosaic{Guid.NewGuid()}.png");
                 }
                 catch (Exception ex)
                 {
