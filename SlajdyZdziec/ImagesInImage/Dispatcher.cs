@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,32 +20,34 @@ namespace SlajdyZdziec.ImagesInImage
             System.Diagnostics.Debug.WriteLine($"{text} {stopwatch.ElapsedMilliseconds}");
         }
         static System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
-        private static Bitmap GetMultiImage(Bitmap image, Size partsDim, Size SizePartImageInOut, Size SizeToCompare, Func<LogicAndImage<ImageToCompare, PartImage>, Func<Bitmap>> PartImageFunc)
+        private unsafe static Bitmap GetMultiImage(Bitmap image, Size partsDim, Size SizePartImageInOut, Size SizeToCompare, Func<LogicAndImage<ImageToCompare, PartImage>, Func<Bitmap>> PartImageFunc)
         {
             Size partSizeInImage;
-            PartImage[] partImage = PartImage.GetPartImageDim(image, partsDim, out partSizeInImage);
+            IntPtr sourcePoirter = (IntPtr)ImageOperation.LoadRGB(image, out int sizeOfImage);
+            PartImage[] partImage = PartImage.GetPartImageDim(image, sourcePoirter, partsDim, out partSizeInImage);
             Dictionary<PartImage, Func<Bitmap>> BitmapDictionary = new Dictionary<PartImage, Func<Bitmap>>();
             WriteTimeForDebug("heder");
             var part1 = new LogicAndImage<ImageToCompare, PartImage>[partImage.Length];
 
             WriteTimeForDebug("Get part procesed");
-            
-            partImage.AsParallel().ForAll(X =>
+
+            partImage.AsParallel().WithDegreeOfParallelism(8).ForAll(X =>
             {//[pobieranie fragmentów
                 part1[X.Pos] = new LogicAndImage<ImageToCompare, PartImage>()
                 {
                     Bitmap = X,
-                    Logic =  new ImageToCompare((Bitmap)X, SizeToCompare)
+                    Logic = new ImageToCompare((Bitmap)X, SizeToCompare)
                 };
             }
                );
-            
             WriteTimeForDebug("Get part procesed");
             List<(LogicAndImage<ImageToCompare, PartImage> part, Func<Bitmap> bitmapFunc)> x = part1.Select(X => (X, PartImageFunc(X))).ToList();//obliczenie najbarddziej podobnych obrazów
 
 
             x.ForEach(X => BitmapDictionary.Add(X.part.Bitmap, X.bitmapFunc));
             Bitmap zw = MargeImage(partsDim, SizePartImageInOut, partSizeInImage, partImage, BitmapDictionary);
+
+            Marshal.FreeHGlobal(sourcePoirter);
             return zw;
         }
         private static Bitmap MargeImage(Size partsDim, Size SizePartImageInOut, Size partSizeInImage, PartImage[] partImage, Dictionary<PartImage, Func<Bitmap>> BitmapDictionary)

@@ -1,6 +1,7 @@
 ﻿using SlajdyZdziec.BaseLogic.ThreadHelper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -11,38 +12,26 @@ namespace SlajdyZdziec.BaseLogic
     public class PartImage
     {
         public int Pos;
-        public PartImage(Bitmap bitmap, Point point, Size sizeRectangle)
+        public IntPtr Source;
+        int WidthSource;
+        public PartImage(IntPtr bitmap, int widthSource, Point point, Size sizeRectangle)
         {
             Source = bitmap;
+            WidthSource = widthSource;
             PointInImage = point;
             Rectangle = new Rectangle(new Point(sizeRectangle.Width * point.X, sizeRectangle.Height * point.Y), sizeRectangle);
 
         }
-        Guid OperationGuid;
-        public PartImage(Bitmap bitmap, Point point, Size sizeRectangle, Guid OperationGuid) : this(bitmap, point, sizeRectangle)
-        {
-            this.OperationGuid = OperationGuid;
-        }
         public Rectangle Rectangle;
         public Point PointInImage;
-        Bitmap Source;
-        public static explicit operator Bitmap(PartImage part)
+        public static Bitmap Staticsource = null;
+        public static unsafe explicit operator Bitmap(PartImage part)
         {
-            if (part.OperationGuid != default)
-            {
-                return CopyToLocal.GetLocalCopy(part.Source, part.OperationGuid).Clone(part.Rectangle, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-            }
-            else
-            {
-                lock (part.Source)
-                {
-                    return part.Source.Clone(part.Rectangle, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-                }
-            }
+            return ImageOperation.LoadBitmap((byte*)part.Source, part.WidthSource, part.Rectangle);
+
         }
-        public static PartImage[] GetPartImageDim(Bitmap source, Size parts, out Size partSize)
+        public static PartImage[] GetPartImageDim(Bitmap source, IntPtr sourcePtr, Size parts, out Size partSize)
         {
-            Guid guid = Guid.NewGuid();
             partSize = GetPartSize(source, in parts);
             PartImage[] returned = new PartImage[parts.Width * parts.Height];
             int l = 0;
@@ -50,7 +39,7 @@ namespace SlajdyZdziec.BaseLogic
             {
                 for (int j = 0; j < parts.Width; j++)
                 {
-                    returned[l++] = new PartImage(source, new Point(j, i), partSize, guid) { Pos = l -1};
+                    returned[l++] = new PartImage(sourcePtr, source.Width, new Point(j, i), partSize) { Pos = l - 1 };
                 }
             }
             return returned;
