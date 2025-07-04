@@ -35,6 +35,7 @@ namespace SlajdyZdziec
             }
             else
             {
+                bool duringLoadData = true;
                 string[] textsConf = File.ReadAllLines("config.txt");
                 Bitmap input = (Bitmap)Bitmap.FromFile(args[0]);
                 try
@@ -48,12 +49,16 @@ namespace SlajdyZdziec
                     {
                         imageUrls.Add(new ImageUrl(new FileInfo(textsConf[i])));
                     }
-                    Bitmap outPut= Dispatcher.GetMultiImage(input, numbers, sizes, compreSizes, imageUrls);
+                    duringLoadData = false;
+                    Bitmap outPut = Dispatcher.GetMultiImage(input, numbers, sizes, compreSizes, imageUrls);
                     outPut.Save($"outMosaic{Guid.NewGuid()}.png");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("error during loading config file");
+                    if (duringLoadData)
+                    {
+                        Console.WriteLine("error during loading config file");
+                    }
                     throw ex;
                 }
             }

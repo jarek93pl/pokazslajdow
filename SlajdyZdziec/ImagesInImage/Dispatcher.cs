@@ -41,12 +41,14 @@ namespace SlajdyZdziec.ImagesInImage
             }
                );
             WriteTimeForDebug("Get part procesed");
-            List<(LogicAndImage<ImageToCompare, PartImage> part, Func<Bitmap> bitmapFunc)> x = part1.Select(X => (X, PartImageFunc(X))).ToList();//obliczenie najbarddziej podobnych obrazów
+            List<(LogicAndImage<ImageToCompare, PartImage> part, Func<Bitmap> bitmapFunc)> x = part1.AsParallel().Select(X => (X, PartImageFunc(X))).ToList();//obliczenie najbarddziej podobnych obrazów
 
 
+            WriteTimeForDebug("comparing");
             x.ForEach(X => BitmapDictionary.Add(X.part.Bitmap, X.bitmapFunc));
             Bitmap zw = MargeImage(partsDim, SizePartImageInOut, partSizeInImage, partImage, BitmapDictionary);
 
+            WriteTimeForDebug("merge");
             Marshal.FreeHGlobal(sourcePoirter);
             return zw;
         }
