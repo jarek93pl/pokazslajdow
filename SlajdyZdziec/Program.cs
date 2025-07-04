@@ -26,7 +26,9 @@ namespace SlajdyZdziec
             Console.WriteLine("size retangle out Y");
             Console.WriteLine("size to compare x");
             Console.WriteLine("size to compare y");
+#if DEBUG
             args = new string[] { @"E:\OneDrive\Pulpit\fb activity\2025.07.03  MozaicApp\Screenshot 2025-07-03 151825.png" };
+#endif
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             if (args.Length == 0)

@@ -54,16 +54,25 @@ namespace SlajdyZdziec.ImagesInImage
         }
         private static Bitmap MargeImage(Size partsDim, Size SizePartImageInOut, Size partSizeInImage, PartImage[] partImage, Dictionary<PartImage, Func<Bitmap>> BitmapDictionary)
         {
-            Bitmap zw = new Bitmap(SizePartImageInOut.Width * partsDim.Width, SizePartImageInOut.Height * partsDim.Height);
-            using (Graphics graphic = Graphics.FromImage(zw))
+            try
             {
-                foreach (var item in partImage)
-                {
-                    graphic.DrawImage(BitmapDictionary[item](), new Rectangle(new Point(item.PointInImage.X * SizePartImageInOut.Width, item.PointInImage.Y * SizePartImageInOut.Height), SizePartImageInOut));
-                }
-            }
 
-            return zw;
+                Bitmap zw = new Bitmap(SizePartImageInOut.Width * partsDim.Width, SizePartImageInOut.Height * partsDim.Height);
+                using (Graphics graphic = Graphics.FromImage(zw))
+                {
+                    foreach (var item in partImage)
+                    {
+                        graphic.DrawImage(BitmapDictionary[item](), new Rectangle(new Point(item.PointInImage.X * SizePartImageInOut.Width, item.PointInImage.Y * SizePartImageInOut.Height), SizePartImageInOut));
+                    }
+                }
+
+                return zw;
+            }
+            catch (System.ArgumentException)
+            {
+
+                throw new Exception("picture is to large");
+            }
         }
 
         public static Bitmap GetMultiImage(Bitmap image, Size partsDim, Size SizePartImageInOut, Size SizeToCompare, List<ImageUrl> imageUrls)
