@@ -50,9 +50,18 @@ namespace SlajdyZdziec.BaseLogic
             {
                 case TypeConvert.Bright:
                     vectors.AddRange(ImageOperation.GetVector(ImageOperation.LoadMono(bitmap)));
+                    if (vectors.Count>254)
+                    {
+                        throw new Exception("image to compare large");
+                    }
                     break;
                 case TypeConvert.RGB:
                     vectors.AddRange(ImageOperation.GetVector(ImageOperation.LoadRGB(bitmap)));
+
+                    if (vectors.Count > 254)
+                    {
+                        throw new Exception("image to compare large");
+                    }
                     break;
                 default:
                     break;
