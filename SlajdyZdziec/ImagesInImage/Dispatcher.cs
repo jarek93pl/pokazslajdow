@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SlajdyZdziec.ImagesInImage
@@ -19,6 +20,28 @@ namespace SlajdyZdziec.ImagesInImage
         {
             System.Diagnostics.Debug.WriteLine($"{text} {stopwatch.ElapsedMilliseconds}");
         }
+        static long AdjustedImage = 0, AllImageForAdjust, AllImageToPrint, PrintedImage;
+        public static void NexAdjustedImage()
+        {
+            long diver = AllImageForAdjust / 100;
+            diver = diver == 0 ? 1 : diver;
+            Interlocked.Increment(ref AdjustedImage);
+            if (AdjustedImage % diver == 0)
+            {
+                Console.WriteLine($"Adjusted {AdjustedImage} of {AllImageForAdjust} images {stopwatch.Elapsed}");
+            }
+        }
+        public static void NexPrintedImage()
+        {
+            long diver = AllImageToPrint / 100;
+            diver = diver == 0 ? 1 : diver;
+            Interlocked.Increment(ref PrintedImage);
+            if (PrintedImage % diver == 0)
+            {
+                Console.WriteLine($"PrintedImage {PrintedImage} of {AllImageToPrint} images {stopwatch.Elapsed}");
+            }
+        }
+
         static System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
         private unsafe static Bitmap GetMultiImage(Bitmap image, Size partsDim, Size SizePartImageInOut, Size SizeToCompare, Func<LogicAndImage<ImageToCompare, PartImage>, Func<Bitmap>> PartImageFunc)
         {
@@ -28,7 +51,7 @@ namespace SlajdyZdziec.ImagesInImage
             Dictionary<PartImage, Func<Bitmap>> BitmapDictionary = new Dictionary<PartImage, Func<Bitmap>>();
             WriteTimeForDebug("heder");
             var part1 = new LogicAndImage<ImageToCompare, PartImage>[partImage.Length];
-
+            AllImageForAdjust = partImage.Length;
             WriteTimeForDebug("Get part procesed");
 
             partImage.AsParallel().WithDegreeOfParallelism(16).ForAll(X =>
@@ -56,13 +79,14 @@ namespace SlajdyZdziec.ImagesInImage
         {
             try
             {
-
+                AllImageToPrint = partImage.Length;
                 Bitmap zw = new Bitmap(SizePartImageInOut.Width * partsDim.Width, SizePartImageInOut.Height * partsDim.Height);
                 using (Graphics graphic = Graphics.FromImage(zw))
                 {
                     foreach (var item in partImage)
                     {
                         graphic.DrawImage(BitmapDictionary[item](), new Rectangle(new Point(item.PointInImage.X * SizePartImageInOut.Width, item.PointInImage.Y * SizePartImageInOut.Height), SizePartImageInOut));
+                        NexPrintedImage();
                     }
                 }
 
@@ -97,6 +121,7 @@ namespace SlajdyZdziec.ImagesInImage
                     }
 
                 }
+                NexAdjustedImage();
                 if (parametersToEdit == null)
                 {
                     return () => Best.Bitmap.Bitmap(SizePartImageInOut);
