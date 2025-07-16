@@ -31,12 +31,12 @@ namespace SlajdyZdziec.ImagesInImage
 
             WriteTimeForDebug("Get part procesed");
 
-            partImage.AsParallel().WithDegreeOfParallelism(8).ForAll(X =>
+            partImage.AsParallel().WithDegreeOfParallelism(16).ForAll(X =>
             {//[pobieranie fragmentów
                 part1[X.Pos] = new LogicAndImage<ImageToCompare, PartImage>()
                 {
                     Bitmap = X,
-                    Logic = new ImageToCompare((Bitmap)X, SizeToCompare)
+                    Logic = new ImageToCompare((Bitmap)X, SizeToCompare, null, 1)
                 };
             }
                );
@@ -81,23 +81,47 @@ namespace SlajdyZdziec.ImagesInImage
 
             Func<Bitmap> Geter(LogicAndImage<ImageToCompare, PartImage> arg)
             {
+                GraphicProcesing.Parameters parametersToEdit = null;
                 long MinDifrent = long.MaxValue;
                 LogicAndImage<ImageToCompare, ImageUrl> Best = null;
                 foreach (var item in list)
                 {
+
+                    GraphicProcesing.Parameters currentparametersToEdit = null;
                     long CurentDistance;
-                    if (MinDifrent > (CurentDistance = item.Logic.GetDifrent(arg.Logic)))
+                    if (MinDifrent > (CurentDistance = item.Logic.GetDifrent(arg.Logic, out currentparametersToEdit)))
                     {
                         Best = item;
                         MinDifrent = CurentDistance;
+                        parametersToEdit = currentparametersToEdit;
                     }
 
                 }
-                return () => Best.Bitmap.Bitmap(SizePartImageInOut);
+                if (parametersToEdit == null)
+                {
+                    return () => Best.Bitmap.Bitmap(SizePartImageInOut);
+                }
+                else
+                {
+                    return () =>
+                    {
+                        var btimap = Best.Bitmap.Bitmap(SizePartImageInOut);
+                        GraphicProcesing.BasicEditing4Parameter(btimap, parametersToEdit.Exposition, parametersToEdit.Saturation, parametersToEdit.Contrast);
+                        return btimap;
+                    };
+                }
             }
 
             list.AddRange(imageUrls.AsParallel().Select(X => new LogicAndImage<ImageToCompare, ImageUrl>()
-            { Bitmap = X, Logic = new ImageToCompare(X.Bitmap(SizeToCompare), SizeToCompare, true) }));
+            {
+                Bitmap = X,
+                Logic = new ImageToCompare(X.Bitmap(SizeToCompare),
+                SizeToCompare, X.GraphicParameters, 1, true)
+                {
+                    CompareFactor = X.factorTocompare
+
+                }
+            }));
             WriteTimeForDebug("LoadImages option from folder");
             return GetMultiImage(image, partsDim, SizePartImageInOut, SizeToCompare, Geter);
         }

@@ -5,11 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.IO;
+using SlajdyZdziec.BaseLogic;
 
 namespace SlajdyZdziec.UserLogic
 {
     public class ImageUrl
     {
+
+        public List<GraphicProcesing.Parameters> GraphicParameters { get; set; }
+        public float factorTocompare = 1.0f;
         public FileInfo file;
         public ImageUrl(FileInfo file)
         {

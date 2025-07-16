@@ -40,7 +40,7 @@ namespace SlajdyZdziec
         {
             if (listBox1.SelectedItem is ImageUrl url)
             {
-                pictureBox1.Image = url.Bitmap(new Size (300,300));
+                pictureBox1.Image = url.Bitmap(new Size(300, 300));
             }
         }
 
@@ -48,7 +48,7 @@ namespace SlajdyZdziec
         {
             List<LogicAndImage<ImageToCompare, ImageUrl>> list = new List<LogicAndImage<ImageToCompare, ImageUrl>>();
             list.AddRange(imageUrls.Select(X => new LogicAndImage<ImageToCompare, ImageUrl>()
-            { Bitmap = X, Logic = new ImageToCompare(X.Bitmap(new Size(30,30)), new Size(30, 30),true) }));
+            { Bitmap = X, Logic = new ImageToCompare(X.Bitmap(new Size(30, 30)), new Size(30, 30), null, 1, true) }));
             (LogicAndImage<ImageToCompare, ImageUrl> Left, LogicAndImage<ImageToCompare, ImageUrl> Right) Record = (null, null);
             long MinDifrent = long.MaxValue;
             Stopwatch stoper = Stopwatch.StartNew();

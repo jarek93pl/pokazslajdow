@@ -6,12 +6,16 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Numerics;
 using SlajdyZdziec.UserLogic;
+using static SlajdyZdziec.BaseLogic.GraphicProcesing;
 
 namespace SlajdyZdziec.BaseLogic
 {
     public class ImageToCompare
     {
+        public float CompareFactor;
+        public List<GraphicProcesing.Parameters> GraphicParameters { get; set; }
         List<Vector<short>> vectors = new List<Vector<short>>();
+        List<Vector<short>>[] vectorsFromParameters;
         byte[] arrey;
         public enum TypeConvert { Bright, RGB };
         bool UseAvx;
@@ -20,10 +24,16 @@ namespace SlajdyZdziec.BaseLogic
         {
 
         }
-        public ImageToCompare(Bitmap bitmap, Size size, TypeConvert typeConvert, bool UseAvx = true)
+        public ImageToCompare(Bitmap bitmap, Size size, TypeConvert typeConvert, List<GraphicProcesing.Parameters> parameters, bool UseAvx = true)
         {
             this.UseAvx = UseAvx;
             this.typeConvert = typeConvert;
+
+            if (parameters != null)
+            {
+                vectorsFromParameters = new List<Vector<short>>[parameters.Count];
+            }
+            GraphicParameters = parameters;
             Load(bitmap, size, UseAvx);
         }
 
@@ -32,87 +42,88 @@ namespace SlajdyZdziec.BaseLogic
             Bitmap toDispose;
             if (UseAvx)
             {
-                LoadVector(toDispose = new Bitmap(bitmap, size), size);
+                LoadVector(toDispose = new Bitmap(bitmap, size), size, ref vectors);
+                if (GraphicParameters != null)
+                {
+                    Bitmap bitmap1 = new Bitmap(toDispose);
+                    for (int i = 0; i < GraphicParameters.Count; i++)
+                    {
+                        vectorsFromParameters[i] = new List<Vector<short>>();
+                        var curPr = GraphicParameters[i];
+                        GraphicProcesing.BasicEditing4Parameter(bitmap1, curPr.Exposition, curPr.Saturation, curPr.Contrast);
+                        LoadVector(bitmap1, size, ref vectorsFromParameters[i]);
+                    }
+                    bitmap1.Dispose();
+                }
             }
             else
             {
-                Load(toDispose = new Bitmap(bitmap, size), size);
+                throw new NotImplementedException();
+                // Load(toDispose = new Bitmap(bitmap, size), size);
             }
             toDispose.Dispose();
         }
 
-        public ImageToCompare(Bitmap bitmap, Size size, bool UseAvx = true) : this(bitmap, size, TypeConvert.RGB, UseAvx)
+        public ImageToCompare(Bitmap bitmap, Size size, List<GraphicProcesing.Parameters> parameters, float compareFactor, bool UseAvx = true) : this(bitmap, size, TypeConvert.RGB, parameters, UseAvx)
         {
+            CompareFactor = compareFactor;
         }
-        private void LoadVector(Bitmap bitmap, Size size)
+        private void LoadVector(Bitmap bitmap, Size size, ref List<Vector<short>> vectors)
         {
             switch (typeConvert)
             {
                 case TypeConvert.Bright:
                     vectors.AddRange(ImageOperation.GetVector(ImageOperation.LoadMono(bitmap)));
-                    if (vectors.Count>254)
-                    {
-                        throw new Exception("image to compare large");
-                    }
                     break;
                 case TypeConvert.RGB:
                     vectors.AddRange(ImageOperation.GetVector(ImageOperation.LoadRGB(bitmap)));
+                    break;
+                default:
+                    break;
+            }
 
-                    if (vectors.Count > 254)
-                    {
-                        throw new Exception("image to compare large");
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        private void Load(Bitmap bitmap, Size size)
-        {
-            switch (typeConvert)
+            if (vectors.Count > 254)
             {
-                case TypeConvert.Bright:
-                    arrey = ImageOperation.LoadMono(bitmap);
-                    break;
-                case TypeConvert.RGB:
-                    arrey = ImageOperation.LoadRGB(bitmap);
-                    break;
-                default:
-                    break;
+                throw new Exception("image to compare large");
             }
         }
-        public long GetDifrent(ImageToCompare image)
+        public long GetDifrent(ImageToCompare image, out GraphicProcesing.Parameters parameters)
         {
+            parameters = null;
             if (UseAvx)
             {
-                return DifrentAvx(image);
+                long minDistance = DifrentAvx(vectors, image.vectors);
+                if (GraphicParameters != null)
+                {
+                    for (int i = 0; i < GraphicParameters.Count; i++)
+                    {
+                        long currentDistance = DifrentAvx(vectorsFromParameters[i], image.vectors);
+                        if (currentDistance < minDistance)
+                        {
+                            parameters = GraphicParameters[i];
+                            minDistance = currentDistance;
+                        }
+                    }
+                }
+                return Convert.ToInt64(minDistance * CompareFactor);
+
             }
             else
             {
-                return DifrentArrey(image);
+                throw new NotImplementedException("Difrent for arrey not implemented");
+                //return DifrentArrey(image);
             }
         }
-        private long DifrentArrey(ImageToCompare image)
-        {
-            long Difrent = 0;
-            byte[] toComper = image.arrey;
-            for (int i = 0; i < arrey.Length; i++)
-            {
-                Difrent += Math.Abs(arrey[i] - toComper[i]);
-            }
-            return Difrent;
-        }
-        private long DifrentAvx(ImageToCompare image)
+        private static long DifrentAvx(List<Vector<short>> vectors, List<Vector<short>> image)
         {
             long Difrent = 0;
             int i = 0;
-            List<Vector<short>> vectorsToCompare = image.vectors;
             while (i < vectors.Count)
             {
                 Vector<short> AgregateSum = Vector<short>.Zero;
                 for (int j = 0; j < 254 && i < vectors.Count; j++, i++)
                 {
-                    AgregateSum += Vector.Abs((vectors[i] - vectorsToCompare[i]));
+                    AgregateSum += Vector.Abs((vectors[i] - image[i]));
                 }
 
                 for (int j = 0; j < Vector<short>.Count; j++)
@@ -124,7 +135,7 @@ namespace SlajdyZdziec.BaseLogic
         }
 
         public static long GetDifrent<T>(LogicAndImage<ImageToCompare, T> Left, LogicAndImage<ImageToCompare, T> Right)
-            => Left.Logic.GetDifrent(Right.Logic);
+            => throw new NotImplementedException();
 
         internal static long GetDifrent<T>((LogicAndImage<ImageToCompare, T>, LogicAndImage<ImageToCompare, T>) curent)
             => GetDifrent(curent.Item1, curent.Item2);
