@@ -31,7 +31,7 @@ namespace SlajdyZdziec
             Console.WriteLine("size to compare x");
             Console.WriteLine("size to compare y");
 #if DEBUG
-            args = new string[] { @"E:\OneDrive\Pulpit\Apki\PokazSlajdow\SlajdyZdziec\Screenshot 2025-07-09 100659+v2.jpg" };
+            args = new string[] { @"E:\OneDrive\Pulpit\Apki\PokazSlajdow\SlajdyZdziec\Screenshot 2025-07-09 100659+v2.jpg", "E:\\OneDrive\\Pulpit\\Apki\\PokazSlajdow\\SlajdyZdziec\\config.txt" };
 #endif
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -42,7 +42,7 @@ namespace SlajdyZdziec
             else
             {
                 bool duringLoadData = true;
-                string[] textsConf = File.ReadAllLines("config.txt");
+                string[] textsConf = File.ReadAllLines(args[1]);
                 Bitmap input = (Bitmap)Bitmap.FromFile(args[0]);
                 try
                 {
@@ -92,10 +92,8 @@ namespace SlajdyZdziec
                     }
                     duringLoadData = false;
                     Bitmap outPut = Dispatcher.GetMultiImage(input, numbers, sizes, compreSizes, imageUrls);
-                    string nameFile = DateTime.Now.ToString("yyyy.MM.dd_hh.mm.ss");
+                    string nameFile = Path.GetFileNameWithoutExtension(args[1]);
                     outPut.Save($"outMosaic{nameFile}.png");
-                    FileInfo file = new FileInfo("config.txt");
-                    file.MoveTo(nameFile + "config.txt");
                 }
                 catch (Exception ex)
                 {
