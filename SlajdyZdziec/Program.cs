@@ -22,7 +22,7 @@ namespace SlajdyZdziec
         [STAThread]
         static void Main(string[] args)
         {
-            CultureInfo culutre = new CultureInfo("us-EN",false);
+            CultureInfo culutre = new CultureInfo("us-EN", false);
             Console.WriteLine("use parameter to get config");
             Console.WriteLine("number of retangle x");
             Console.WriteLine("number of retangle y");
@@ -82,11 +82,24 @@ namespace SlajdyZdziec
                             }
 
                         }
-                        imageUrls.Add(new ImageUrl(new FileInfo(textsConf[i]))
+                        string[] splited = textsConf[i].Split(';');
+                        if (splited.Length < 2)
                         {
-                            GraphicParameters = graphicParameters,
-                            factorTocompare = factorToCompare
-                        });
+                            imageUrls.Add(new ImageUrl(new FileInfo(textsConf[i]))
+                            {
+                                GraphicParameters = graphicParameters,
+                                factorTocompare = factorToCompare
+                            });
+                        }
+                        else
+                        {
+                            imageUrls.Add(new ImageUrl(new FileInfo(splited[0]))
+                            {
+                                GraphicParameters = graphicParameters,
+                                factorTocompare = factorToCompare,
+                                PropabilityAccept = Convert.ToSingle(splited[1], culutre)
+                            });
+                        }
 
                     EndLabe:;
                     }

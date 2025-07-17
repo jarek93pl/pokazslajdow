@@ -69,7 +69,7 @@ namespace SlajdyZdziec.ImagesInImage
 
             WriteTimeForDebug("comparing");
             x.ForEach(X => BitmapDictionary.Add(X.part.Bitmap, X.bitmapFunc));
-            SaveAsXml.Save(x.Select(X => X.part).ToList()); 
+            SaveAsXml.Save(x.Select(X => X.part).ToList());
             Bitmap zw = MargeImage(partsDim, SizePartImageInOut, partSizeInImage, partImage, BitmapDictionary);
 
             WriteTimeForDebug("merge");
@@ -111,14 +111,16 @@ namespace SlajdyZdziec.ImagesInImage
                 LogicAndImage<ImageToCompare, ImageUrl> Best = null;
                 foreach (var item in list)
                 {
-
                     GraphicProcesing.Parameters currentparametersToEdit = null;
                     long CurentDistance;
                     if (MinDifrent > (CurentDistance = item.Logic.GetDifrent(arg.Logic, out currentparametersToEdit)))
                     {
-                        Best = item;
-                        MinDifrent = CurentDistance;
-                        parametersToEdit = currentparametersToEdit;
+                        if (item.Bitmap.CanApplyForThis(arg.Bitmap))
+                        {
+                            Best = item;
+                            MinDifrent = CurentDistance;
+                            parametersToEdit = currentparametersToEdit;
+                        }
                     }
 
                 }
