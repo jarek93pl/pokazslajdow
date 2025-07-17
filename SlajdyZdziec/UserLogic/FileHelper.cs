@@ -23,7 +23,7 @@ namespace SlajdyZdziec.UserLogic
             }
         }
 
-        public static float floatReader(string text, float min = -1, float max = 2)
+        public static float floatReader(string text, float min = -1, float max = 5)
         {
             float returned = float.Parse(text);
             string[] split = text.Split(',');
