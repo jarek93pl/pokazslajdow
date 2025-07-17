@@ -22,7 +22,6 @@ namespace SlajdyZdziec
         [STAThread]
         static void Main(string[] args)
         {
-            CultureInfo culutre = new CultureInfo("us-EN", false);
             Console.WriteLine("use parameter to get config");
             Console.WriteLine("number of retangle x");
             Console.WriteLine("number of retangle y");
@@ -58,7 +57,7 @@ namespace SlajdyZdziec
                         {
                             graphicParameters = new List<GraphicProcesing.Parameters>();
                             i++;
-                            factorToCompare = Convert.ToSingle(textsConf[i], culutre);
+                            factorToCompare = FileHelper.floatReader(textsConf[i]);
                             i++;
                             for (; i < textsConf.Length; i++)
                             {
@@ -74,9 +73,9 @@ namespace SlajdyZdziec
                                 }
                                 GraphicProcesing.Parameters parameters = new GraphicProcesing.Parameters()
                                 {
-                                    Exposition = Convert.ToSingle(list[0], culutre),
-                                    Saturation = Convert.ToSingle(list[1], culutre),
-                                    Contrast = Convert.ToSingle(list[2], culutre)
+                                    Exposition = FileHelper.floatReader(list[0]),
+                                    Saturation = FileHelper.floatReader(list[1]),
+                                    Contrast = FileHelper.floatReader(list[2])
                                 };
                                 graphicParameters.Add(parameters);
                             }
@@ -97,7 +96,7 @@ namespace SlajdyZdziec
                             {
                                 GraphicParameters = graphicParameters,
                                 factorTocompare = factorToCompare,
-                                PropabilityAccept = Convert.ToSingle(splited[1], culutre)
+                                PropabilityAccept = FileHelper.floatReader(splited[1])
                             });
                         }
 

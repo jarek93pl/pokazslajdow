@@ -22,5 +22,43 @@ namespace SlajdyZdziec.UserLogic
                 }
             }
         }
+
+        public static float floatReader(string text, float min = -1, float max = 2)
+        {
+            float returned = float.Parse(text);
+            string[] split = text.Split(',');
+            if (split.Length == 2)
+            {
+                returned = GetValue(split[0], split[1]);
+            }
+            else
+            {
+                split = text.Split('.');
+                if (split.Length == 2)
+                {
+                    returned = GetValue(split[0], split[1]);
+                }
+            }
+            if (returned < min || returned > max)
+            {
+                throw new Exception($"vrong value {text}");
+            }
+            return returned;
+
+        }
+        private static float GetValue(string f1, string f2)
+        {
+            float vMain = float.Parse(f1);
+            double f2Value = float.Parse(f2);
+
+            if (f1[0] == '-')
+            {
+                f2Value *= -1;
+            }
+            f2Value = f2Value / Math.Pow(10, f2.Length);
+            return vMain + (float)f2Value;
+           
+        }
+
     }
 }

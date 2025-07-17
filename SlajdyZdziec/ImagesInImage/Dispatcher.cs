@@ -64,7 +64,11 @@ namespace SlajdyZdziec.ImagesInImage
             }
                );
             WriteTimeForDebug("Get part procesed");
-            List<(LogicAndImage<ImageToCompare, PartImage> part, Func<Bitmap> bitmapFunc)> x = part1.AsParallel().Select(X => (X, PartImageFunc(X))).ToList();//obliczenie najbarddziej podobnych obrazów
+            List<(LogicAndImage<ImageToCompare, PartImage> part, Func<Bitmap> bitmapFunc)> x = part1
+#if ! DEBUG
+                .AsParallel()
+#endif
+                .Select(X => (X, PartImageFunc(X))).ToList();//obliczenie najbarddziej podobnych obrazów
 
 
             WriteTimeForDebug("comparing");
@@ -128,6 +132,10 @@ namespace SlajdyZdziec.ImagesInImage
                 arg.BestResult = Best;
                 arg.Parameters = parametersToEdit;
                 arg.Difrence = MinDifrent;
+                if (MinDifrent < 0)
+                {
+                    throw new Exception("images or parameter are to larger, ");
+                }
                 if (parametersToEdit == null)
                 {
                     return () => Best.Bitmap.Bitmap(SizePartImageInOut);
