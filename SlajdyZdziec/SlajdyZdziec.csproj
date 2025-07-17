@@ -96,6 +96,7 @@
   <ItemGroup>
     <Compile Include="BaseLogic\GraphicProcesing.cs" />
     <Compile Include="BaseLogic\PartImage.cs" />
+    <Compile Include="BaseLogic\SaveAsXml.cs" />
     <Compile Include="BaseLogic\ThreadHelper\CopyToLocal.cs" />
     <Compile Include="GUI\Comon\PoleVektor.cs">
       <SubType>UserControl</SubType>

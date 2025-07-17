@@ -22,7 +22,7 @@ namespace SlajdyZdziec
         [STAThread]
         static void Main(string[] args)
         {
-
+            CultureInfo culutre = new CultureInfo("us-EN",false);
             Console.WriteLine("use parameter to get config");
             Console.WriteLine("number of retangle x");
             Console.WriteLine("number of retangle y");
@@ -58,7 +58,7 @@ namespace SlajdyZdziec
                         {
                             graphicParameters = new List<GraphicProcesing.Parameters>();
                             i++;
-                            factorToCompare = Convert.ToSingle(textsConf[i], CultureInfo.InvariantCulture);
+                            factorToCompare = Convert.ToSingle(textsConf[i], culutre);
                             i++;
                             for (; i < textsConf.Length; i++)
                             {
@@ -67,16 +67,16 @@ namespace SlajdyZdziec
                                     goto EndLabe;
                                 }
 
-                                string[] list = textsConf[i].Split(' ');
+                                string[] list = textsConf[i].Split(';');
                                 if (list.Length != 3)
                                 {
                                     throw new Exception("config file is not correct");
                                 }
                                 GraphicProcesing.Parameters parameters = new GraphicProcesing.Parameters()
                                 {
-                                    Exposition = Convert.ToSingle(list[0], CultureInfo.InvariantCulture),
-                                    Saturation = Convert.ToSingle(list[1], CultureInfo.InvariantCulture),
-                                    Contrast = Convert.ToSingle(list[2], CultureInfo.InvariantCulture)
+                                    Exposition = Convert.ToSingle(list[0], culutre),
+                                    Saturation = Convert.ToSingle(list[1], culutre),
+                                    Contrast = Convert.ToSingle(list[2], culutre)
                                 };
                                 graphicParameters.Add(parameters);
                             }

@@ -69,6 +69,7 @@ namespace SlajdyZdziec.ImagesInImage
 
             WriteTimeForDebug("comparing");
             x.ForEach(X => BitmapDictionary.Add(X.part.Bitmap, X.bitmapFunc));
+            SaveAsXml.Save(x.Select(X => X.part).ToList()); 
             Bitmap zw = MargeImage(partsDim, SizePartImageInOut, partSizeInImage, partImage, BitmapDictionary);
 
             WriteTimeForDebug("merge");
@@ -122,6 +123,9 @@ namespace SlajdyZdziec.ImagesInImage
 
                 }
                 NexAdjustedImage();
+                arg.BestResult = Best;
+                arg.Parameters = parametersToEdit;
+                arg.Difrence = MinDifrent;
                 if (parametersToEdit == null)
                 {
                     return () => Best.Bitmap.Bitmap(SizePartImageInOut);
