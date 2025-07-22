@@ -104,7 +104,7 @@ namespace SlajdyZdziec.ImagesInImage
             }
         }
 
-        public static Bitmap GetMultiImage(Bitmap image, Size partsDim, Size SizePartImageInOut, Size SizeToCompare, List<ImageUrl> imageUrls)
+        public static Bitmap GetMultiImage(Bitmap image, Size partsDim, Size SizePartImageInOut, Size SizeToCompare, List<ImageUrl> imageUrls, float factorLimiting)
         {
             List<LogicAndImage<ImageToCompare, ImageUrl>> list = new List<LogicAndImage<ImageToCompare, ImageUrl>>();
 
@@ -128,6 +128,7 @@ namespace SlajdyZdziec.ImagesInImage
                     }
 
                 }
+                Best.Logic.UseFactorLimiting(factorLimiting);
                 NexAdjustedImage();
                 arg.BestResult = Best;
                 arg.Parameters = parametersToEdit;
@@ -157,7 +158,7 @@ namespace SlajdyZdziec.ImagesInImage
                 Logic = new ImageToCompare(X.Bitmap(SizeToCompare),
                 SizeToCompare, X.GraphicParameters, 1, true)
                 {
-                    CompareFactor = X.factorTocompare
+                    CompareFactorFromGroup = X.factorTocompare
 
                 }
             }));

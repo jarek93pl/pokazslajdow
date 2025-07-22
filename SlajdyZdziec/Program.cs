@@ -46,12 +46,14 @@ namespace SlajdyZdziec
                 try
                 {
                     float factorToCompare = 1;
+                    float factorLimiting;
                     Size numbers = new Size(Convert.ToInt32(textsConf[0]), Convert.ToInt32(textsConf[1]));
                     Size sizes = new Size(Convert.ToInt32(textsConf[2]), Convert.ToInt32(textsConf[3]));
                     Size compreSizes = new Size(Convert.ToInt32(textsConf[4]), Convert.ToInt32(textsConf[5]));
+                    factorLimiting = FileHelper.floatReader(textsConf[6]);
                     List<ImageUrl> imageUrls = new List<ImageUrl>();
                     List<GraphicProcesing.Parameters> graphicParameters = new List<GraphicProcesing.Parameters>();
-                    for (int i = 6; i < textsConf.Length; i++)
+                    for (int i = 7; i < textsConf.Length; i++)
                     {
                         if (textsConf[i] == staticSpliter)
                         {
@@ -67,7 +69,7 @@ namespace SlajdyZdziec
                                 }
 
                                 string[] list = textsConf[i].Split(';');
-                                if (list.Length != 3)
+                                if (list.Length != 4)
                                 {
                                     throw new Exception("config file is not correct");
                                 }
@@ -75,7 +77,8 @@ namespace SlajdyZdziec
                                 {
                                     Exposition = FileHelper.floatReader(list[0]),
                                     Saturation = FileHelper.floatReader(list[1]),
-                                    Contrast = FileHelper.floatReader(list[2])
+                                    Contrast = FileHelper.floatReader(list[2]),
+                                    CostOfEditing = FileHelper.floatReader(list[3])
                                 };
                                 graphicParameters.Add(parameters);
                             }
@@ -96,14 +99,14 @@ namespace SlajdyZdziec
                             {
                                 GraphicParameters = graphicParameters,
                                 factorTocompare = factorToCompare,
-                                PropabilityAccept = FileHelper.floatReader(splited[1])
+                                ChengeValue = FileHelper.floatReader(splited[1])
                             });
                         }
 
                     EndLabe:;
                     }
                     duringLoadData = false;
-                    Bitmap outPut = Dispatcher.GetMultiImage(input, numbers, sizes, compreSizes, imageUrls);
+                    Bitmap outPut = Dispatcher.GetMultiImage(input, numbers, sizes, compreSizes, imageUrls, factorLimiting);
                     string nameFile = Path.GetFileNameWithoutExtension(args[1]);
                     outPut.Save($"outMosaic{nameFile}.png");
                 }

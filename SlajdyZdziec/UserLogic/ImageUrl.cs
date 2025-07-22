@@ -15,7 +15,7 @@ namespace SlajdyZdziec.UserLogic
         public List<GraphicProcesing.Parameters> GraphicParameters { get; set; }
         public float factorTocompare = 1.0f;
         public FileInfo file;
-        public float PropabilityAccept = 1;
+        public float ChengeValue = 1;
         public ImageUrl(FileInfo file)
         {
             this.file = file;
@@ -32,7 +32,7 @@ namespace SlajdyZdziec.UserLogic
 
         internal bool CanApplyForThis(PartImage bitmap)
         {
-            return StaticRander.GetNumber(bitmap.PointInImage.X, bitmap.PointInImage.Y) < PropabilityAccept;
+            return StaticRander.GetNumber(bitmap.PointInImage.X, bitmap.PointInImage.Y) < ChengeValue;
         }
     }
 }

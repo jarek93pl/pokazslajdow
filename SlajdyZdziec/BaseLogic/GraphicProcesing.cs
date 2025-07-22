@@ -16,6 +16,7 @@ namespace SlajdyZdziec.BaseLogic
             public float Exposition { get; set; } = 1.0f;
             public float Saturation { get; set; } = 1.0f;
             public float Contrast { get; set; } = 0;
+            public float CostOfEditing { get; internal set; }
         }
         public static unsafe void BasicEditing4Parameter(Bitmap Obraz, float exposytion, float saturaion, float contrast)
         {

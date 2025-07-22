@@ -12,7 +12,7 @@ namespace SlajdyZdziec.BaseLogic
 {
     public class ImageToCompare
     {
-        public float CompareFactor;
+        public float CompareFactorFromGroup;
         public List<GraphicProcesing.Parameters> GraphicParameters { get; set; }
         List<Vector<short>> vectors = new List<Vector<short>>();
         List<Vector<short>>[] vectorsFromParameters;
@@ -20,6 +20,7 @@ namespace SlajdyZdziec.BaseLogic
         public enum TypeConvert { Bright, RGB };
         bool UseAvx;
         TypeConvert typeConvert;
+        public volatile float LimitMultitudesForThis = 1;
         public ImageToCompare()
         {
 
@@ -66,7 +67,7 @@ namespace SlajdyZdziec.BaseLogic
 
         public ImageToCompare(Bitmap bitmap, Size size, List<GraphicProcesing.Parameters> parameters, float compareFactor, bool UseAvx = true) : this(bitmap, size, TypeConvert.RGB, parameters, UseAvx)
         {
-            CompareFactor = compareFactor;
+            CompareFactorFromGroup = compareFactor;
         }
         private void LoadVector(Bitmap bitmap, Size size, ref List<Vector<short>> vectors)
         {
@@ -89,6 +90,7 @@ namespace SlajdyZdziec.BaseLogic
         }
         public long GetDifrent(ImageToCompare image, out GraphicProcesing.Parameters parameters)
         {
+            float factorFromParameter = 1;
             parameters = null;
             if (UseAvx)
             {
@@ -102,10 +104,11 @@ namespace SlajdyZdziec.BaseLogic
                         {
                             parameters = GraphicParameters[i];
                             minDistance = currentDistance;
+                            factorFromParameter = GraphicParameters[i].CostOfEditing;
                         }
                     }
                 }
-                return Convert.ToInt64(minDistance * CompareFactor);
+                return Convert.ToInt64(minDistance * CompareFactorFromGroup * LimitMultitudesForThis);
 
             }
             else
@@ -139,5 +142,13 @@ namespace SlajdyZdziec.BaseLogic
 
         internal static long GetDifrent<T>((LogicAndImage<ImageToCompare, T>, LogicAndImage<ImageToCompare, T>) curent)
             => GetDifrent(curent.Item1, curent.Item2);
+
+        internal void UseFactorLimiting(float factorLimiting)
+        {
+            lock (this)
+            {
+                LimitMultitudesForThis *= factorLimiting;
+            }
+        }
     }
 }

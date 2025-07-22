@@ -42,8 +42,9 @@ namespace SlajdyZdziec.GUI.ImageInImage
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Dispatcher.GetMultiImage(bitmap, projection.WartośćSize, SizePartImage.WartośćSize,SizeToCompare.WartośćSize, urls).Save("t.jpg");
-            Process.Start("t.jpg");
+            throw new NotImplementedException("This method is not implemented yet.");
+            //Dispatcher.GetMultiImage(bitmap, projection.WartośćSize, SizePartImage.WartośćSize,SizeToCompare.WartośćSize, urls).Save("t.jpg");
+            //Process.Start("t.jpg");
         }
 
         private void poleVektor1_Load_1(object sender, EventArgs e)
