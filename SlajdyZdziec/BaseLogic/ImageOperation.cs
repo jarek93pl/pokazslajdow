@@ -25,7 +25,7 @@ namespace SlajdyZdziec.BaseLogic
                 rgb* kr = (rgb*)((byte*)(bp.Scan0 + y * bp.Stride));
                 for (int x = 0; x < Obraz.Width; x++, kr++, obsugiwana++)
                 {
-                    j = (*kr).r;
+                    j += (*kr).r;
                     j += (*kr).g;
                     j += (*kr).b;
                     byte zw = ((byte)(j / 3));
