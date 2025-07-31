@@ -146,7 +146,7 @@ namespace SlajdyZdziec.ImagesInImage
                     return () =>
                     {
                         var btimap = Best.Bitmap.Bitmap(SizePartImageInOut);
-                        GraphicProcesing.BasicEditing4Parameter(btimap, parametersToEdit.Exposition, parametersToEdit.Saturation, parametersToEdit.Contrast);
+                        GraphicProcesing.BasicEditing4Parameter(btimap, parametersToEdit.Exposition, parametersToEdit.Saturation, parametersToEdit.Contrast, parametersToEdit.Temperature);
                         return btimap;
                     };
                 }

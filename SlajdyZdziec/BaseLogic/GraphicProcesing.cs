@@ -16,9 +16,10 @@ namespace SlajdyZdziec.BaseLogic
             public float Exposition { get; set; } = 1.0f;
             public float Saturation { get; set; } = 1.0f;
             public float Contrast { get; set; } = 0;
+            public int Temperature { get; set; } = 0;
             public float CostOfEditing { get; internal set; }
         }
-        public static unsafe void BasicEditing4Parameter(Bitmap Obraz, float exposytion, float saturaion, float contrast)
+        public static unsafe void BasicEditing4Parameter(Bitmap Obraz, float exposytion, float saturaion, float contrast, int temperature)
         {
             long avg = 0;
             BitmapData bp = Obraz.LockBits(new Rectangle(0, 0, Obraz.Width, Obraz.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
@@ -41,9 +42,9 @@ namespace SlajdyZdziec.BaseLogic
                     r += -((*kr).r - avgPixel) + ((*kr).r - avgPixel) * saturaion;
                     g += -((*kr).g - avgPixel) + ((*kr).g - avgPixel) * saturaion;
                     b += -((*kr).b - avgPixel) + ((*kr).b - avgPixel) * saturaion;
-                    r += sumFromContrast;
+                    r += sumFromContrast - temperature;
                     g += sumFromContrast;
-                    b += sumFromContrast;
+                    b += sumFromContrast +temperature;
                     r *= exposytion;
                     g *= exposytion;
                     b *= exposytion;

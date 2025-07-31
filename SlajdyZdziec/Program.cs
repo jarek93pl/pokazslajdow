@@ -22,6 +22,14 @@ namespace SlajdyZdziec
         [STAThread]
         static void Main(string[] args)
         {
+            if (args.Length == 0)
+            {
+                args = new string[2];
+                Console.WriteLine("podaj lokalizacje obrazu ");
+                args[0] = Console.ReadLine().Trim('"');
+                Console.WriteLine("podaj lokalizacje config ");
+                args[1] = Console.ReadLine().Trim('"');
+            }
             Console.WriteLine("use parameter to get config");
             Console.WriteLine("number of retangle x");
             Console.WriteLine("number of retangle y");
@@ -29,9 +37,7 @@ namespace SlajdyZdziec
             Console.WriteLine("size retangle out Y");
             Console.WriteLine("size to compare x");
             Console.WriteLine("size to compare y");
-#if DEBUG
-            args = new string[] { @"E:\OneDrive\Pulpit\Apki\PokazSlajdow\SlajdyZdziec\Screenshot 2025-07-09 100659+v2.jpg", "E:\\OneDrive\\Pulpit\\Apki\\PokazSlajdow\\SlajdyZdziec\\config.txt" };
-#endif
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             if (args.Length == 0)
@@ -69,7 +75,7 @@ namespace SlajdyZdziec
                                 }
 
                                 string[] list = textsConf[i].Split(';');
-                                if (list.Length != 4)
+                                if (list.Length != 5)
                                 {
                                     throw new Exception("config file is not correct");
                                 }
@@ -78,7 +84,8 @@ namespace SlajdyZdziec
                                     Exposition = FileHelper.floatReader(list[0]),
                                     Saturation = FileHelper.floatReader(list[1]),
                                     Contrast = FileHelper.floatReader(list[2]),
-                                    CostOfEditing = FileHelper.floatReader(list[3])
+                                    Temperature = Convert.ToInt32(list[3]),
+                                    CostOfEditing = FileHelper.floatReader(list[4])
                                 };
                                 graphicParameters.Add(parameters);
                             }
