@@ -20,7 +20,17 @@ namespace SlajdyZdziec.ImagesInImage
         {
             System.Diagnostics.Debug.WriteLine($"{text} {stopwatch.ElapsedMilliseconds}");
         }
-        static long AdjustedImage = 0, AllImageForAdjust, AllImageToPrint, PrintedImage;
+        static long AdjustedImage = 0, AllImageForAdjust, AllImageToPrint, PrintedImage, AllImageToLoad, LoadedImages;
+        public static void NexLoadedImage()
+        {
+            long diver = AllImageToLoad / 100;
+            diver = diver == 0 ? 1 : diver;
+            Interlocked.Increment(ref LoadedImages);
+            if (LoadedImages % diver == 0)
+            {
+                Console.WriteLine($"LoadedImages {LoadedImages} of {AllImageToLoad} images {stopwatch.Elapsed}");
+            }
+        }
         public static void NexAdjustedImage()
         {
             long diver = AllImageForAdjust / 100;
@@ -48,6 +58,7 @@ namespace SlajdyZdziec.ImagesInImage
             Size partSizeInImage;
             IntPtr sourcePoirter = (IntPtr)ImageOperation.LoadRGB(image, out int sizeOfImage);
             PartImage[] partImage = PartImage.GetPartImageDim(image, sourcePoirter, partsDim, out partSizeInImage);
+            ChengeOrder(partImage);
             Dictionary<PartImage, Func<Bitmap>> BitmapDictionary = new Dictionary<PartImage, Func<Bitmap>>();
             WriteTimeForDebug("heder");
             var part1 = new LogicAndImage<ImageToCompare, PartImage>[partImage.Length];
@@ -80,6 +91,19 @@ namespace SlajdyZdziec.ImagesInImage
             Marshal.FreeHGlobal(sourcePoirter);
             return zw;
         }
+
+        private static void ChengeOrder(PartImage[] partImage)
+        {
+            Random random = new Random();
+            for (int i = 0; i < partImage.Length; i++)
+            {
+                int j = random.Next(partImage.Length);
+                PartImage temp = partImage[i];
+                partImage[i] = partImage[j];
+                partImage[j] = temp;
+            }
+        }
+
         private static Bitmap MargeImage(Size partsDim, Size SizePartImageInOut, Size partSizeInImage, PartImage[] partImage, Dictionary<PartImage, Func<Bitmap>> BitmapDictionary)
         {
             try
@@ -146,21 +170,25 @@ namespace SlajdyZdziec.ImagesInImage
                     return () =>
                     {
                         var btimap = Best.Bitmap.Bitmap(SizePartImageInOut);
-                        GraphicProcesing.BasicEditing4Parameter(btimap, parametersToEdit.Exposition, parametersToEdit.Saturation, parametersToEdit.Contrast, parametersToEdit.Temperature);
+                        GraphicProcesing.BasicEditing4Parameter(btimap, parametersToEdit.Exposition, parametersToEdit.Saturation, parametersToEdit.Contrast, parametersToEdit.Temperature, parametersToEdit.tint);
                         return btimap;
                     };
                 }
             }
-
-            list.AddRange(imageUrls.AsParallel().Select(X => new LogicAndImage<ImageToCompare, ImageUrl>()
+            AllImageToLoad = imageUrls.Count;
+            list.AddRange(imageUrls.AsParallel().Select(X =>
             {
-                Bitmap = X,
-                Logic = new ImageToCompare(X.Bitmap(SizeToCompare),
-                SizeToCompare, X.GraphicParameters, 1, true)
+                NexLoadedImage();
+                return new LogicAndImage<ImageToCompare, ImageUrl>()
                 {
-                    CompareFactorFromGroup = X.factorTocompare
+                    Bitmap = X,
+                    Logic = new ImageToCompare(X.Bitmap(SizeToCompare),
+                SizeToCompare, X.GraphicParameters, 1, true)
+                    {
+                        CompareFactorFromGroup = X.factorTocompare
 
-                }
+                    }
+                };
             }));
             WriteTimeForDebug("LoadImages option from folder");
             return GetMultiImage(image, partsDim, SizePartImageInOut, SizeToCompare, Geter);

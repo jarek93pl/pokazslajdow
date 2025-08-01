@@ -75,7 +75,7 @@ namespace SlajdyZdziec
                                 }
 
                                 string[] list = textsConf[i].Split(';');
-                                if (list.Length != 5)
+                                if (list.Length != 6)
                                 {
                                     throw new Exception("config file is not correct");
                                 }
@@ -85,7 +85,8 @@ namespace SlajdyZdziec
                                     Saturation = FileHelper.floatReader(list[1]),
                                     Contrast = FileHelper.floatReader(list[2]),
                                     Temperature = Convert.ToInt32(list[3]),
-                                    CostOfEditing = FileHelper.floatReader(list[4])
+                                    tint = Convert.ToInt32(list[4]),
+                                    CostOfEditing = FileHelper.floatReader(list[5])
                                 };
                                 graphicParameters.Add(parameters);
                             }

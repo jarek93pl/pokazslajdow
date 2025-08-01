@@ -51,7 +51,7 @@ namespace SlajdyZdziec.BaseLogic
                     {
                         vectorsFromParameters[i] = new List<Vector<short>>();
                         var curPr = GraphicParameters[i];
-                        GraphicProcesing.BasicEditing4Parameter(bitmap1, curPr.Exposition, curPr.Saturation, curPr.Contrast, curPr.Temperature);
+                        GraphicProcesing.BasicEditing4Parameter(bitmap1, curPr.Exposition, curPr.Saturation, curPr.Contrast, curPr.Temperature, curPr.tint);
                         LoadVector(bitmap1, size, ref vectorsFromParameters[i]);
                     }
                     bitmap1.Dispose();
