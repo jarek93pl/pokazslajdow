@@ -12,9 +12,9 @@ using System.Windows.Forms;
 
 namespace SlajdyZdziec
 {
-
-    static class Program
+    public static class Program
     {
+        public static string nameFile;
         const string staticSpliter = "---";
         /// <summary>
         /// Główny punkt wejścia dla aplikacji.
@@ -114,8 +114,9 @@ namespace SlajdyZdziec
                     EndLabe:;
                     }
                     duringLoadData = false;
+
+                    nameFile = Path.GetFileNameWithoutExtension(args[1]);
                     Bitmap outPut = Dispatcher.GetMultiImage(input, numbers, sizes, compreSizes, imageUrls, factorLimiting);
-                    string nameFile = Path.GetFileNameWithoutExtension(args[1]);
                     outPut.Save($"outMosaic{nameFile}.png");
                 }
                 catch (Exception ex)
