@@ -14,11 +14,14 @@ namespace SlajdyZdziec.BaseLogic
     {
         public float CompareFactorFromGroup;
         public List<GraphicProcesing.Parameters> GraphicParameters { get; set; }
-        List<Vector<short>> vectors = new List<Vector<short>>();
-        List<Vector<short>>[] vectorsFromParameters;
+        byte[] vectors;
+        byte[][] vectorsFromParameters;
         byte[] arrey;
+        int[] tableWitColorSum;
+        int[][] ParametertableWitColorSum;
+
         public enum TypeConvert { Bright, RGB };
-        bool UseAvx;
+        bool UseTables;
         TypeConvert typeConvert;
         public volatile float LimitMultitudesForThis = 1;
         public ImageToCompare()
@@ -27,12 +30,13 @@ namespace SlajdyZdziec.BaseLogic
         }
         public ImageToCompare(Bitmap bitmap, Size size, TypeConvert typeConvert, List<GraphicProcesing.Parameters> parameters, bool UseAvx = true)
         {
-            this.UseAvx = UseAvx;
+            this.UseTables = UseAvx;
             this.typeConvert = typeConvert;
 
             if (parameters != null)
             {
-                vectorsFromParameters = new List<Vector<short>>[parameters.Count];
+                vectorsFromParameters = new byte[parameters.Count][];
+                ParametertableWitColorSum = new int[parameters.Count][];
             }
             GraphicParameters = parameters;
             Load(bitmap, size, UseAvx);
@@ -43,16 +47,15 @@ namespace SlajdyZdziec.BaseLogic
             Bitmap toDispose;
             if (UseAvx)
             {
-                LoadVector(toDispose = new Bitmap(bitmap, size), size, ref vectors);
+                vectors = LoadVector(toDispose = new Bitmap(bitmap, size), size, out tableWitColorSum);
                 if (GraphicParameters != null)
                 {
                     Bitmap bitmap1 = new Bitmap(toDispose);
                     for (int i = 0; i < GraphicParameters.Count; i++)
                     {
-                        vectorsFromParameters[i] = new List<Vector<short>>();
                         var curPr = GraphicParameters[i];
                         GraphicProcesing.BasicEditing4Parameter(bitmap1, curPr.Exposition, curPr.Saturation, curPr.Contrast, curPr.Temperature, curPr.tint);
-                        LoadVector(bitmap1, size, ref vectorsFromParameters[i]);
+                        vectorsFromParameters[i] = LoadVector(bitmap1, size, out ParametertableWitColorSum[i]);
                     }
                     bitmap1.Dispose();
                 }
@@ -69,37 +72,31 @@ namespace SlajdyZdziec.BaseLogic
         {
             CompareFactorFromGroup = compareFactor;
         }
-        private void LoadVector(Bitmap bitmap, Size size, ref List<Vector<short>> vectors)
+        private byte[] LoadVector(Bitmap bitmap, Size size, out int[] outTableWithSumes)
         {
             switch (typeConvert)
             {
                 case TypeConvert.Bright:
-                    vectors.AddRange(ImageOperation.GetVector(ImageOperation.LoadMono(bitmap)));
-                    break;
+                    outTableWithSumes = new int[1];
+                    return ImageOperation.LoadMono(bitmap);
                 case TypeConvert.RGB:
-                    vectors.AddRange(ImageOperation.GetVector(ImageOperation.LoadRGB(bitmap)));
-                    break;
-                default:
-                    break;
+                    return ImageOperation.LoadRGBWitTTable(bitmap, out outTableWithSumes);
             }
+            throw new NotImplementedException("Unknown type convert: " + typeConvert);
 
-            if (vectors.Count > 254)
-            {
-                throw new Exception("image to compare large");
-            }
         }
         public long GetDifrent(ImageToCompare image, out GraphicProcesing.Parameters parameters)
         {
             float factorFromParameter = 1;
             parameters = null;
-            if (UseAvx)
+            if (UseTables)
             {
-                long minDistance = DifrentAvx(vectors, image.vectors);
+                long minDistance = DifrentRGB(vectors, image.vectors) + DifrentRGB(tableWitColorSum, image.tableWitColorSum);
                 if (GraphicParameters != null)
                 {
                     for (int i = 0; i < GraphicParameters.Count; i++)
                     {
-                        long currentDistance = DifrentAvx(vectorsFromParameters[i], image.vectors);
+                        long currentDistance = DifrentRGB(vectorsFromParameters[i], image.vectors) + DifrentRGB(ParametertableWitColorSum[i], image.tableWitColorSum);
                         if (currentDistance < minDistance)
                         {
                             parameters = GraphicParameters[i];
@@ -117,26 +114,26 @@ namespace SlajdyZdziec.BaseLogic
                 //return DifrentArrey(image);
             }
         }
-        private static long DifrentAvx(List<Vector<short>> vectors, List<Vector<short>> image)
+        private static long DifrentRGB(byte[] vectors, byte[] image)
         {
             long Difrent = 0;
-            int i = 0;
-            while (i < vectors.Count)
+            for (int i = 0; i < vectors.Length; i++)
             {
-                Vector<short> AgregateSum = Vector<short>.Zero;
-                for (int j = 0; j < 254 && i < vectors.Count; j++, i++)
-                {
-                    AgregateSum += Vector.Abs((vectors[i] - image[i]));
-                }
+                Difrent += Math.Abs(vectors[i] - image[i]);
 
-                for (int j = 0; j < Vector<short>.Count; j++)
-                {
-                    Difrent += AgregateSum[j];
-                }
             }
             return Difrent;
         }
+        private static long DifrentRGB(int[] vectors, int[] image)
+        {
+            long Difrent = 0;
+            for (int i = 0; i < vectors.Length; i++)
+            {
+                Difrent += Math.Abs(vectors[i] - image[i]);
 
+            }
+            return Difrent;
+        }
         public static long GetDifrent<T>(LogicAndImage<ImageToCompare, T> Left, LogicAndImage<ImageToCompare, T> Right)
             => throw new NotImplementedException();
 

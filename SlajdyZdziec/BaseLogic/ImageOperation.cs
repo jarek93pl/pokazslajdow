@@ -100,8 +100,9 @@ namespace SlajdyZdziec.BaseLogic
             Obraz.UnlockBits(bp);
             return table;
         }
-        public static byte[] LoadRGB(Bitmap Obraz)
+        public static byte[] LoadRGBWitTTable(Bitmap Obraz,out int[] tableWitColorSum)
         {
+            tableWitColorSum = new int[3];
             byte[] table = new byte[(Obraz.Width * Obraz.Height) * 3];
             int obsugiwana = 0;
 
@@ -114,6 +115,9 @@ namespace SlajdyZdziec.BaseLogic
                 rgb* kr = (rgb*)((byte*)(bp.Scan0 + y * bp.Stride));
                 for (int x = 0; x < Obraz.Width; x++, kr++)
                 {
+                    tableWitColorSum[0] += (*kr).r;
+                    tableWitColorSum[1] += (*kr).g;
+                    tableWitColorSum[2] += (*kr).b;
                     table[obsugiwana++] = (*kr).r;
                     table[obsugiwana++] = (*kr).g;
                     table[obsugiwana++] = (*kr).b;
@@ -121,23 +125,6 @@ namespace SlajdyZdziec.BaseLogic
             }
             Obraz.UnlockBits(bp);
             return table;
-        }
-        public static IEnumerable<Vector<short>> GetVector(byte[] imageInByte)
-        {
-            List<short> vs = new List<short>();
-            vs.AddRange(imageInByte.Select(X => (short)X));
-            int Numer = imageInByte.Length / Vector<short>.Count;
-            Numer += imageInByte.Length % Vector<short>.Count == 0 ? 0 : 1;
-            int Size = Numer * Vector<short>.Count;
-            for (int j = imageInByte.Length; j < Size; j++)
-            {
-                vs.Add(0);
-            }
-            short[] arrey = vs.ToArray();
-            for (int i = 0; i < Numer; i++)
-            {
-                yield return new Vector<short>(arrey, i * Vector<short>.Count);
-            }
         }
     }
 }
